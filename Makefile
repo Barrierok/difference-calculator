@@ -10,3 +10,8 @@ build:
 
 lint:
 	npx eslint .
+
+start:
+	make build
+	make lint
+	npm link
