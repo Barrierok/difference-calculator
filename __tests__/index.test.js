@@ -1,5 +1,5 @@
-import genDiff from '../../src';
-import formatString from '../../src/utils';
+import genDiff from '../src';
+import formatString from '../src/utils';
 
 test('check difference', () => {
   const expected = [
