@@ -14,10 +14,10 @@ lint:
 start:
 	make build
 	make lint
-	npm link
+	make test
 
 test:
 	npm test
-	
+
 test-coverage:
 	npm test -- --coverage

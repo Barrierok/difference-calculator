@@ -13,5 +13,5 @@ test('check difference', () => {
     '}',
   ].join('\n');
 
-  expect(genDiff('/home/barrier/test/before.json', '/home/barrier/test/after.json')).toEqual(expected);
+  expect(genDiff(`${__dirname}/__fixtures__/before.json`, `${__dirname}/__fixtures__/after.json`)).toEqual(expected);
 });
