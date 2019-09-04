@@ -1,15 +1,14 @@
 import program from 'commander';
-import fs from 'fs';
 import { has } from 'lodash';
+import getParseData from './parsers';
 
 const formatString = (key, value, operation = ' ') => `  ${operation} ${key}: ${value}`;
 
 const filterKeys = (keys1, keys2) => Array.from(new Set(keys1.concat(keys2)));
 
-const getParseData = (path) => JSON.parse(fs.readFileSync(path, 'utf8'));
-
 const genDiff = (pathToFile1, pathToFile2) => {
   const [data1, data2] = [getParseData(pathToFile1), getParseData(pathToFile2)];
+
   const keys = filterKeys(Object.keys(data1), Object.keys(data2));
 
   return keys
@@ -36,7 +35,7 @@ export default genDiff;
 export const utility = () => {
   program
     .version('0.0.1', '-V, --vers', 'output the version number')
-    .description('Compares two configuration files and shows keyAvailability1 difference.')
+    .description('Compares two configuration files and shows difference.')
     .option('-f, --format [type]', 'Output format')
     .arguments('<firstConfig> <secondConfig>')
     .action((firstConfig, secondConfig) => {
