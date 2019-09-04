@@ -1,44 +1,29 @@
+import fs from 'fs';
 import genDiff from '../src';
-import formatString from '../src/utils';
 
-test('check difference', () => {
-  const expected = [
-    '{',
-    formatString('host', 'hexlet.io'),
-    formatString('timeout', 20, '+'),
-    formatString('timeout', 50, '-'),
-    formatString('proxy', '123.234.53.22', '-'),
-    formatString('follow', false, '-'),
-    formatString('verbose', true, '+'),
-    '}',
-  ].join('\n');
+const pathOutput1 = `${__dirname}/__fixtures__/expectedOutputs/output1.txt`;
+const pathOutput2 = `${__dirname}/__fixtures__/expectedOutputs/output2.txt`;
+const pathOutput3 = `${__dirname}/__fixtures__/expectedOutputs/output3.txt`;
+const pathAfterJson = `${__dirname}/__fixtures__/configurations/after.json`;
+const pathBeforeJson = `${__dirname}/__fixtures__/configurations/before.json`;
+const pathEmptyJson = `${__dirname}/__fixtures__/configurations/empty.json`;
 
-  expect(genDiff(`${__dirname}/__fixtures__/before.json`, `${__dirname}/__fixtures__/after.json`)).toEqual(expected);
+test('check difference json', () => {
+  const expected = fs.readFileSync(pathOutput1, 'utf8');
+
+  expect(genDiff(pathBeforeJson, pathAfterJson)).toEqual(expected);
 });
 
-describe('check difference with empty', () => {
+describe('check difference json with empty', () => {
   test('test1', () => {
-    const expected = [
-      '{',
-      formatString('host', 'hexlet.io', '-'),
-      formatString('timeout', 50, '-'),
-      formatString('proxy', '123.234.53.22', '-'),
-      formatString('follow', false, '-'),
-      '}',
-    ].join('\n');
+    const expected = fs.readFileSync(pathOutput2, 'utf8');
 
-    expect(genDiff(`${__dirname}/__fixtures__/before.json`, `${__dirname}/__fixtures__/empty.json`)).toEqual(expected);
+    expect(genDiff(pathBeforeJson, pathEmptyJson)).toEqual(expected);
   });
 
   test('test2', () => {
-    const expected = [
-      '{',
-      formatString('timeout', 20, '+'),
-      formatString('verbose', true, '+'),
-      formatString('host', 'hexlet.io', '+'),
-      '}',
-    ].join('\n');
+    const expected = fs.readFileSync(pathOutput3, 'utf8');
 
-    expect(genDiff(`${__dirname}/__fixtures__/empty.json`, `${__dirname}/__fixtures__/after.json`)).toEqual(expected);
+    expect(genDiff(pathEmptyJson, pathAfterJson)).toEqual(expected);
   });
 });

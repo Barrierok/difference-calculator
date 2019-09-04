@@ -1,7 +1,8 @@
 import program from 'commander';
 import fs from 'fs';
 import { has } from 'lodash';
-import formatString from './utils';
+
+const formatString = (key, value, operation = ' ') => `  ${operation} ${key}: ${value}`;
 
 const filterKeys = (keys1, keys2) => Array.from(new Set(keys1.concat(keys2)));
 
