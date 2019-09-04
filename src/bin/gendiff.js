@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import utilite from '..';
+import { utility } from '..';
 
-utilite();
+utility();
