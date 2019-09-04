@@ -15,3 +15,9 @@ start:
 	make build
 	make lint
 	npm link
+
+test:
+	npm test
+	
+test-coverage:
+	npm test -- --coverage

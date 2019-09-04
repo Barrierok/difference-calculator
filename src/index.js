@@ -1,6 +1,7 @@
 import program from 'commander';
 import fs from 'fs';
 import { has } from 'lodash';
+import formatString from './utils';
 
 const filterKeys = (keys1, keys2) => Array.from(new Set(keys1.concat(keys2)));
 
@@ -16,14 +17,14 @@ const genDiff = (pathToFile1, pathToFile2) => {
 
       if (keyAvailability1 && keyAvailability2) {
         if (data1[key] === data2[key]) {
-          return [...acc, `     ${key}: ${data1[key]}`];
+          return [...acc, formatString(key, data1[key])];
         }
-        return [...acc, `   + ${key}: ${data2[key]}`, `   - ${key}: ${data1[key]}`];
+        return [...acc, formatString(key, data2[key], '+'), formatString(key, data1[key], '-')];
       }
       if (keyAvailability1) {
-        return [...acc, `   - ${key}: ${data1[key]}`];
+        return [...acc, formatString(key, data1[key], '-')];
       }
-      return [...acc, `   + ${key}: ${data2[key]}`];
+      return [...acc, formatString(key, data2[key], '+')];
     }, '{')
     .concat('}')
     .join('\n');
