@@ -2,6 +2,7 @@
   "name": "difference-calculator-barrier",
   "version": "1.0.0",
   "description": "Utility for finding differences in configuration files",
+  "main": "index.js",
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
   },
@@ -43,6 +44,7 @@
     "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "commander": "^3.0.1"
+    "commander": "^3.0.1",
+    "lodash": "^4.17.15"
   }
 }
