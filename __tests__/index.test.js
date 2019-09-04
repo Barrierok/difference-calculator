@@ -12,6 +12,6 @@ test('check difference', () => {
     formatString('verbose', true, '+'),
     '}',
   ].join('\n');
-  
+
   expect(genDiff('/home/barrier/test/before.json', '/home/barrier/test/after.json')).toEqual(expected);
 });
