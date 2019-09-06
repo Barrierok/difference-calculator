@@ -49,8 +49,6 @@ const genDiff = (pathToFile1, pathToFile2) => {
   return diff;
 };
 
-export default genDiff;
-
 export const utility = () => {
   program
     .version('0.0.1', '-V, --vers', 'output the version number')
@@ -63,3 +61,5 @@ export const utility = () => {
     })
     .parse(process.argv);
 };
+
+export default genDiff;
