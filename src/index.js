@@ -1,33 +1,52 @@
 import program from 'commander';
 import { has } from 'lodash';
-import getParseData from './parsers';
-
-const formatString = (key, value, operation = ' ') => `  ${operation} ${key}: ${value}`;
+import parse from './parsers';
+import render from './renders';
 
 const filterKeys = (keys1, keys2) => Array.from(new Set(keys1.concat(keys2)));
 
-const genDiff = (pathToFile1, pathToFile2) => {
-  const [data1, data2] = [getParseData(pathToFile1), getParseData(pathToFile2)];
-
+const compareData = (data1, data2) => {
   const keys = filterKeys(Object.keys(data1), Object.keys(data2));
 
-  return keys
-    .reduce((acc, key) => {
-      const [keyAvailability1, keyAvailability2] = [has(data1, key), has(data2, key)];
+  return keys.reduce((acc, key) => {
+    const [keyAvailability1, keyAvailability2] = [has(data1, key), has(data2, key)];
 
-      if (keyAvailability1 && keyAvailability2) {
-        if (data1[key] === data2[key]) {
-          return [...acc, formatString(key, data1[key])];
-        }
-        return [...acc, formatString(key, data2[key], '+'), formatString(key, data1[key], '-')];
+    const keyData = {
+      name: key,
+      previousValue: null,
+      value: null,
+      action: '',
+      children: [],
+    };
+
+    if (keyAvailability1 && keyAvailability2) {
+      if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
+        return [...acc, { ...keyData, children: compareData(data1[key], data2[key]) }];
       }
-      if (keyAvailability1) {
-        return [...acc, formatString(key, data1[key], '-')];
+
+      if (data1[key] === data2[key]) {
+        return [...acc, { ...keyData, value: data1[key] }];
       }
-      return [...acc, formatString(key, data2[key], '+')];
-    }, '{')
-    .concat('}')
-    .join('\n');
+
+      return [...acc, {
+        ...keyData,
+        previousValue: data1[key],
+        value: data2[key],
+        action: 'edit',
+      }];
+    }
+
+    return [...acc, {
+      ...keyData,
+      value: keyAvailability1 ? data1[key] : data2[key],
+      action: keyAvailability1 ? 'delete' : 'add',
+    }];
+  }, []);
+};
+
+const genDiff = (pathToFile1, pathToFile2) => {
+  const diff = render(compareData(parse(pathToFile1), parse(pathToFile2)));
+  return diff;
 };
 
 export default genDiff;
@@ -41,7 +60,6 @@ export const utility = () => {
     .action((firstConfig, secondConfig) => {
       const diff = genDiff(firstConfig, secondConfig);
       console.log(diff);
-    });
-
-  program.parse(process.argv);
+    })
+    .parse(process.argv);
 };
