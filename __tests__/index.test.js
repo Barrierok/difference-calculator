@@ -1,12 +1,12 @@
 import fs from 'fs';
-import path from 'path';
 import genDiff from '../src';
 
-const ext = ['.json', '.yml', '.ini'];
+const formats = ['nested', 'plane'];
 
-const pathOutput1 = `${__dirname}/__fixtures__/expectedOutputs/output1.txt`;
-const pathOutput2 = `${__dirname}/__fixtures__/expectedOutputs/output2.txt`;
-const pathOutput3 = `${__dirname}/__fixtures__/expectedOutputs/output3.txt`;
+const pathNestedOutput1 = `${__dirname}/__fixtures__/expectedOutputs/nestedOutputs/output1.txt`;
+const pathNestedOutput2 = `${__dirname}/__fixtures__/expectedOutputs/nestedOutputs/output2.txt`;
+const pathPlaneOutput1 = `${__dirname}/__fixtures__/expectedOutputs/planeOutputs/output1.txt`;
+const pathPlaneOutput2 = `${__dirname}/__fixtures__/expectedOutputs/planeOutputs/output2.txt`;
 
 const pathFlatAfterJson = `${__dirname}/__fixtures__/configurations/jsonFiles/flatAfter.json`;
 const pathFlatBeforeJson = `${__dirname}/__fixtures__/configurations/jsonFiles/flatBefore.json`;
@@ -27,23 +27,27 @@ const pathNestedAfterIni = `${__dirname}/__fixtures__/configurations/iniFiles/ne
 const pathNestedBeforeIni = `${__dirname}/__fixtures__/configurations/iniFiles/nestedBefore.ini`;
 
 test.each`
-      pathAfter          |     pathBefore          | expectedExt  |       pathOutput
-  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   | ${ext[0]}    |     ${pathOutput1}
-  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    | ${ext[1]}    |     ${pathOutput1}
-  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    | ${ext[2]}    |     ${pathOutput1}
-  ${pathNestedAfterJson} | ${pathNestedBeforeJson} | ${ext[0]}    |     ${pathOutput2}
-  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  | ${ext[1]}    |     ${pathOutput3}
-  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  | ${ext[2]}    |     ${pathOutput3}
-`('compare difference $expectedExt', (
+      pathAfter          |     pathBefore          |         pathOutput      |      format
+  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   |   ${pathNestedOutput1}  |   ${formats[0]}
+  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    |   ${pathNestedOutput1}  |   ${formats[0]}
+  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    |   ${pathNestedOutput1}  |   ${formats[0]}
+  ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathNestedOutput2}  |   ${formats[0]}
+  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathNestedOutput2}  |   ${formats[0]}
+  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathNestedOutput2}  |   ${formats[0]}
+  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   |   ${pathPlaneOutput1}  |   ${formats[1]}
+  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    |   ${pathPlaneOutput1}  |   ${formats[1]}
+  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    |   ${pathPlaneOutput1}  |   ${formats[1]}
+  ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathPlaneOutput2}  |   ${formats[1]}
+  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathPlaneOutput2}  |   ${formats[1]}
+  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathPlaneOutput2}  |   ${formats[1]}
+`('compare difference --$format format', (
   {
     pathAfter,
     pathBefore,
-    expectedExt,
     pathOutput,
+    format,
   },
 ) => {
   const expectedData1 = fs.readFileSync(pathOutput, 'utf8');
-  expect(genDiff(pathBefore, pathAfter)).toEqual(expectedData1);
-  expect(path.extname(pathAfter)).toEqual(expectedExt);
-  expect(path.extname(pathBefore)).toEqual(expectedExt);
+  expect(genDiff(pathBefore, pathAfter, format)).toEqual(expectedData1);
 });
