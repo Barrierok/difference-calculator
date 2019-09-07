@@ -5,19 +5,21 @@ import render from './formatters';
 
 const filterKeys = (keys1, keys2) => Array.from(new Set(keys1.concat(keys2))).sort();
 
+const templateData = {
+  name: '',
+  previousValue: null,
+  value: null,
+  action: '',
+  children: [],
+};
+
 const compareData = (data1, data2) => {
   const keys = filterKeys(Object.keys(data1), Object.keys(data2));
 
   return keys.reduce((acc, key) => {
     const [keyAvailability1, keyAvailability2] = [has(data1, key), has(data2, key)];
 
-    const keyData = {
-      name: key,
-      previousValue: null,
-      value: null,
-      action: '',
-      children: [],
-    };
+    const keyData = { ...templateData, name: key };
 
     if (keyAvailability1 && keyAvailability2) {
       if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
@@ -36,11 +38,7 @@ const compareData = (data1, data2) => {
       }];
     }
 
-    return [...acc, {
-      ...keyData,
-      value: keyAvailability1 ? data1[key] : data2[key],
-      action: keyAvailability1 ? 'delete' : 'add',
-    }];
+    return [...acc, { ...keyData, value: keyAvailability1 ? data1[key] : data2[key], action: keyAvailability1 ? 'delete' : 'add' }];
   }, []);
 };
 
