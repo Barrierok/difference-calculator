@@ -1,12 +1,14 @@
 import fs from 'fs';
 import genDiff from '../src';
 
-const formats = ['nested', 'plane'];
+const formats = ['nested', 'plain', 'json'];
 
 const pathNestedOutput1 = `${__dirname}/__fixtures__/expectedOutputs/nestedOutputs/output1.txt`;
 const pathNestedOutput2 = `${__dirname}/__fixtures__/expectedOutputs/nestedOutputs/output2.txt`;
-const pathPlaneOutput1 = `${__dirname}/__fixtures__/expectedOutputs/planeOutputs/output1.txt`;
-const pathPlaneOutput2 = `${__dirname}/__fixtures__/expectedOutputs/planeOutputs/output2.txt`;
+const pathPlainOutput1 = `${__dirname}/__fixtures__/expectedOutputs/plainOutputs/output1.txt`;
+const pathPlainOutput2 = `${__dirname}/__fixtures__/expectedOutputs/plainOutputs/output2.txt`;
+const pathJsonOutput1 = `${__dirname}/__fixtures__/expectedOutputs/jsonOutputs/output1.json`;
+const pathJsonOutput2 = `${__dirname}/__fixtures__/expectedOutputs/jsonOutputs/output2.json`;
 
 const pathFlatAfterJson = `${__dirname}/__fixtures__/configurations/jsonFiles/flatAfter.json`;
 const pathFlatBeforeJson = `${__dirname}/__fixtures__/configurations/jsonFiles/flatBefore.json`;
@@ -34,12 +36,18 @@ test.each`
   ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathNestedOutput2}  |   ${formats[0]}
   ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathNestedOutput2}  |   ${formats[0]}
   ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathNestedOutput2}  |   ${formats[0]}
-  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   |   ${pathPlaneOutput1}  |   ${formats[1]}
-  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    |   ${pathPlaneOutput1}  |   ${formats[1]}
-  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    |   ${pathPlaneOutput1}  |   ${formats[1]}
-  ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathPlaneOutput2}  |   ${formats[1]}
-  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathPlaneOutput2}  |   ${formats[1]}
-  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathPlaneOutput2}  |   ${formats[1]}
+  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   |   ${pathPlainOutput1}  |   ${formats[1]}
+  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    |   ${pathPlainOutput1}  |   ${formats[1]}
+  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    |   ${pathPlainOutput1}  |   ${formats[1]}
+  ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathPlainOutput2}  |   ${formats[1]}
+  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathPlainOutput2}  |   ${formats[1]}
+  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathPlainOutput2}  |   ${formats[1]}
+  ${pathFlatAfterJson}   | ${pathFlatBeforeJson}   |   ${pathJsonOutput1}  |   ${formats[2]}
+  ${pathFlatAfterYml}    | ${pathFlatBeforeYml}    |   ${pathJsonOutput1}  |   ${formats[2]}
+  ${pathFlatAfterIni}    | ${pathFlatBeforeIni}    |   ${pathJsonOutput1}  |   ${formats[2]}
+  ${pathNestedAfterJson} | ${pathNestedBeforeJson} |   ${pathJsonOutput2}  |   ${formats[2]}
+  ${pathNestedAfterYml}  | ${pathNestedBeforeYml}  |   ${pathJsonOutput2}  |   ${formats[2]}
+  ${pathNestedAfterIni}  | ${pathNestedBeforeIni}  |   ${pathJsonOutput2}  |   ${formats[2]}
 `('compare difference --$format format', (
   {
     pathAfter,
