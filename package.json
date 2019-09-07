@@ -1,6 +1,6 @@
 {
   "name": "difference-calculator-barrier",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Utility for finding differences in configuration files",
   "main": "dist/index.js",
   "bin": {
