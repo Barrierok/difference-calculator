@@ -1,5 +1,5 @@
 import nested from './nestedFormat';
-import plain from './planeFormat';
+import plain from './plainFormat';
 import json from './jsonFormat';
 
 const changeFormat = { nested, plain, json };
