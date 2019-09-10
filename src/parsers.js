@@ -4,14 +4,14 @@ import path from 'path';
 import ini from 'ini';
 
 const dispatcher = {
-  '.json': (data) => JSON.parse(data),
-  '.yml': (data) => yaml.safeLoad(data),
-  '.ini': (data) => ini.parse(data),
+  '.json': JSON.parse,
+  '.yml': yaml.safeLoad,
+  '.ini': ini.parse,
 };
 
 export default (pathFile) => {
   const data = fs.readFileSync(pathFile, 'utf8');
-  const parser = dispatcher[path.extname(pathFile)];
-  const parsedData = parser(data) || {};
+  const parse = dispatcher[path.extname(pathFile)];
+  const parsedData = parse(data) || {};
   return parsedData;
 };
