@@ -11,6 +11,7 @@ const dispatcher = {
 
 export default (pathFile) => {
   const data = fs.readFileSync(pathFile, 'utf8');
-  const extnameFile = path.extname(pathFile);
-  return dispatcher[extnameFile](data) || {};
+  const parser = dispatcher[path.extname(pathFile)];
+  const parsedData = parser(data) || {};
+  return parsedData;
 };
