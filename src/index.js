@@ -1,4 +1,6 @@
 import { has } from 'lodash';
+import path from 'path';
+import fs from 'fs';
 import parse from './parsers';
 import render from './formatters';
 
@@ -41,7 +43,9 @@ const compareData = (data1, data2) => {
   });
 };
 
-export default (pathToFile1, pathToFile2, format = 'treeLike') => {
-  const diff = render(compareData(parse(pathToFile1), parse(pathToFile2)), format);
+export default (pathFile1, pathFile2, format = 'treeLike') => {
+  const information1 = { data: fs.readFileSync(pathFile1, 'utf8'), extname: path.extname(pathFile1) };
+  const information2 = { data: fs.readFileSync(pathFile2, 'utf8'), extname: path.extname(pathFile2) };
+  const diff = render(compareData(parse(information1), parse(information2)), format);
   return diff;
 };

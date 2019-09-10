@@ -1,6 +1,4 @@
-import fs from 'fs';
 import yaml from 'js-yaml';
-import path from 'path';
 import ini from 'ini';
 
 const dispatcher = {
@@ -9,9 +7,8 @@ const dispatcher = {
   '.ini': ini.parse,
 };
 
-export default (pathFile) => {
-  const data = fs.readFileSync(pathFile, 'utf8');
-  const parse = dispatcher[path.extname(pathFile)];
+export default ({ data, extname }) => {
+  const parse = dispatcher[extname];
   const parsedData = parse(data) || {};
   return parsedData;
 };
