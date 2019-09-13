@@ -4,7 +4,7 @@ import fs from 'fs';
 import parse from './parsers';
 import render from './formatters';
 
-const filterKeys = (keys1, keys2) => Object.keys({ ...keys1, ...keys2 }).sort();
+const filterKeys = (obj1, obj2) => Object.keys({ ...obj1, ...obj2 }).sort();
 
 const templateData = {
   name: '',
