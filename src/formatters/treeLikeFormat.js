@@ -7,26 +7,26 @@ const renderObject = (object, counterSpaces) => Object.keys(object).reduce((acc,
 
 const insertObject = (object, counterSpaces) => `{\n${renderObject(object, counterSpaces + 6)}  ${' '.repeat(counterSpaces)}}`;
 
-const convertValue = (value, counterSpaces) => (typeof value === 'object' ? insertObject(value, counterSpaces) : value);
+const convertValue = (option, counterSpaces) => (typeof option === 'object' ? insertObject(option, counterSpaces) : option);
 
-const selectSymbol = { add: '+', delete: '-', '': ' ' };
+const selectSymbol = { added: '+', deleted: '-', '': ' ' };
 
 const render = (ast, counterSpaces = 2) => ast.reduce((acc, {
   name,
-  action,
-  value,
-  previousValue,
+  type,
+  option,
+  previousOption,
   children,
 }) => {
   if (children.length > 0) {
     return `${acc}  ${' '.repeat(counterSpaces)}${name}: {\n${render(children, counterSpaces + 4)}  ${' '.repeat(counterSpaces)}}\n`;
   }
-  const newValue = convertValue(value, counterSpaces);
-  if (action === 'edit') {
-    const newPreviousValue = convertValue(previousValue, counterSpaces);
+  const newValue = convertValue(option, counterSpaces);
+  if (type === 'edited') {
+    const newPreviousValue = convertValue(previousOption, counterSpaces);
     return `${acc}${' '.repeat(counterSpaces)}- ${name}: ${newPreviousValue}\n${' '.repeat(counterSpaces)}+ ${name}: ${newValue}\n`;
   }
-  return `${acc}${' '.repeat(counterSpaces)}${selectSymbol[action]} ${name}: ${newValue}\n`;
+  return `${acc}${' '.repeat(counterSpaces)}${selectSymbol[type]} ${name}: ${newValue}\n`;
 }, '');
 
 export default (data) => `{\n${render(data)}}`;

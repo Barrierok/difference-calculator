@@ -10,9 +10,9 @@ const types = {
 const convertValue = (value) => types[typeof value](value);
 
 const stringify = {
-  edit: (item) => `updated. From ${convertValue(item.previousValue)} to ${convertValue(item.value)}`,
-  delete: () => 'removed',
-  add: (item) => `added with value: ${convertValue(item.value)}`,
+  edited: (item) => `updated. From ${convertValue(item.previousOption)} to ${convertValue(item.option)}`,
+  deleted: () => 'removed',
+  added: (item) => `added with value: ${convertValue(item.option)}`,
 };
 
 const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
@@ -20,7 +20,7 @@ const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
     return `${acc}${render(item.children, `${partProperty}${item.name}.`)}`;
   }
   const startString = getStartString(partProperty, item.name);
-  return item.action ? `${acc}${startString}${stringify[item.action](item)}\n` : `${acc}`;
+  return item.type ? `${acc}${startString}${stringify[item.type](item)}\n` : `${acc}`;
 }, '');
 
 export default (data) => {

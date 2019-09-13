@@ -8,9 +8,9 @@ const filterKeys = (keys1, keys2) => Object.keys({ ...keys1, ...keys2 }).sort();
 
 const templateData = {
   name: '',
-  previousValue: null,
-  value: null,
-  action: '',
+  previousOption: null,
+  option: null,
+  type: '',
   children: [],
 };
 
@@ -28,24 +28,32 @@ const compareData = (data1, data2) => {
       }
 
       if (data1[key] === data2[key]) {
-        return { ...keyData, value: data1[key] };
+        return { ...keyData, option: data1[key] };
       }
 
       return {
         ...keyData,
-        previousValue: data1[key],
-        value: data2[key],
-        action: 'edit',
+        previousOption: data1[key],
+        option: data2[key],
+        type: 'edited',
       };
     }
+    const option = keyAvailability1 ? data1[key] : data2[key];
+    const type = keyAvailability1 ? 'deleted' : 'added';
 
-    return { ...keyData, value: keyAvailability1 ? data1[key] : data2[key], action: keyAvailability1 ? 'delete' : 'add' };
+    return { ...keyData, option, type };
   });
 };
 
 export default (pathFile1, pathFile2, format = 'treeLike') => {
-  const information1 = { data: fs.readFileSync(pathFile1, 'utf8'), extname: path.extname(pathFile1) };
-  const information2 = { data: fs.readFileSync(pathFile2, 'utf8'), extname: path.extname(pathFile2) };
-  const diff = render(compareData(parse(information1), parse(information2)), format);
+  const data1 = fs.readFileSync(pathFile1, 'utf8');
+  const data2 = fs.readFileSync(pathFile2, 'utf8');
+  const extname1 = path.extname(pathFile1);
+  const extname2 = path.extname(pathFile2);
+
+  const parsedData1 = parse(data1, extname1);
+  const parsedData2 = parse(data2, extname2);
+
+  const diff = render(compareData(parsedData1, parsedData2), format);
   return diff;
 };

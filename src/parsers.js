@@ -7,7 +7,7 @@ const dispatcher = {
   '.ini': ini.parse,
 };
 
-export default ({ data, extname }) => {
+export default (data, extname) => {
   const parse = dispatcher[extname];
   const parsedData = parse(data) || {};
   return parsedData;
