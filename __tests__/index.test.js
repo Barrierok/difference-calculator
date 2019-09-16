@@ -5,8 +5,14 @@ const getPathFile = (ext, type) => (
   `${__dirname}/__fixtures__/configurations/${ext}Files/${type}.${ext}`
 );
 
+const getFormat = {
+  json: 'json',
+  plain: 'txt',
+  treeLike: 'txt',
+};
+
 const getPathOutput = (formatter) => (
-  `${__dirname}/__fixtures__/expectedOutputs/${formatter}Output.${formatter === 'json' ? formatter : 'txt'}`
+  `${__dirname}/__fixtures__/expectedOutputs/${formatter}Output.${getFormat[formatter]}`
 );
 
 test.each(
@@ -15,8 +21,9 @@ test.each(
     ['plain', 'yml'], ['plain', 'ini'], ['plain', 'json'],
     ['json', 'yml'], ['json', 'ini'], ['json', 'json'],
   ],
-)('compare difference %s files. Format: %s', (formatter, extension) => {
-  const [pathBefore, pathAfter] = [getPathFile(extension, 'before'), getPathFile(extension, 'after')];
+)('compare difference %s files. Format: %s', (formatter, format) => {
+  const pathBefore = getPathFile(format, 'before');
+  const pathAfter = getPathFile(format, 'after');
   const pathOutput = getPathOutput(formatter);
   const expectedData = fs.readFileSync(pathOutput, 'utf8');
 

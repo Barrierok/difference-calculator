@@ -16,9 +16,13 @@ const stringify = {
 };
 
 const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
-  if (item.children.length > 0) {
+  if (item.type === 'parent') {
     return `${acc}${render(item.children, `${partProperty}${item.name}.`)}`;
   }
+  if (item.type === 'unchanged') {
+    return `${acc}`;
+  }
+
   const startString = getStartString(partProperty, item.name);
   return item.type ? `${acc}${startString}${stringify[item.type](item)}\n` : `${acc}`;
 }, '');

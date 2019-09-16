@@ -9,7 +9,7 @@ const insertObject = (object, counterSpaces) => `{\n${renderObject(object, count
 
 const convertValue = (option, counterSpaces) => (typeof option === 'object' ? insertObject(option, counterSpaces) : option);
 
-const selectSymbol = { added: '+', deleted: '-', '': ' ' };
+const selectSymbol = { added: '+', deleted: '-', unchanged: ' ' };
 
 const render = (ast, counterSpaces = 2) => ast.reduce((acc, {
   name,
@@ -18,7 +18,7 @@ const render = (ast, counterSpaces = 2) => ast.reduce((acc, {
   previousOption,
   children,
 }) => {
-  if (children.length > 0) {
+  if (type === 'parent') {
     return `${acc}  ${' '.repeat(counterSpaces)}${name}: {\n${render(children, counterSpaces + 4)}  ${' '.repeat(counterSpaces)}}\n`;
   }
   const newValue = convertValue(option, counterSpaces);
