@@ -17,17 +17,14 @@ const stringify = {
 
 const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
   if (item.type === 'parent') {
-    return `${acc}${render(item.children, `${partProperty}${item.name}.`)}`;
+    return [...acc, ...render(item.children, `${partProperty}${item.name}.`)];
   }
   if (item.type === 'unchanged') {
-    return `${acc}`;
+    return acc;
   }
 
   const startString = getStartString(partProperty, item.name);
-  return item.type ? `${acc}${startString}${stringify[item.type](item)}\n` : `${acc}`;
-}, '');
+  return item.type ? [...acc, `${startString}${stringify[item.type](item)}`] : acc;
+}, []);
 
-export default (data) => {
-  const resString = render(data);
-  return resString.slice(0, resString.length - 1);
-};
+export default (data) => render(data).join('\n');

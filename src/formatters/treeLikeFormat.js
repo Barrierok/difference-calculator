@@ -1,32 +1,40 @@
-const renderObject = (object, counterSpaces) => Object.keys(object).reduce((acc, key) => {
-  if (typeof object[key] === 'object') {
-    return `${acc}${' '.repeat(counterSpaces)}${key}: {\n${renderObject(object[key], counterSpaces + 4)}${' '.repeat(counterSpaces)}}\n`;
+const getSpaces = (deep) => ' '.repeat(4 * deep - 2);
+
+const renderObject = (object, deep) => Object.keys(object).reduce((acc, key) => {
+  if (typeof object[key] !== 'object') {
+    return [...acc, `${getSpaces(deep)}  ${key}: ${object[key]}`];
   }
-  return `${acc}${' '.repeat(counterSpaces)}${key}: ${object[key]}\n`;
-}, '');
+  const objects = renderObject(object[key], deep + 1);
+  return [...acc, `${getSpaces(deep)}  ${key}: {`, ...objects, `${getSpaces(deep)}  }`];
+}, []);
 
-const insertObject = (object, counterSpaces) => `{\n${renderObject(object, counterSpaces + 6)}  ${' '.repeat(counterSpaces)}}`;
+const insertObject = (object, deep) => ['{', ...renderObject(object, deep + 1), `${getSpaces(deep)}  }`];
 
-const convertValue = (option, counterSpaces) => (typeof option === 'object' ? insertObject(option, counterSpaces) : option);
+const convertValue = (option, deep) => (typeof option === 'object' ? insertObject(option, deep).join('\n') : option);
 
-const selectSymbol = { added: '+', deleted: '-', unchanged: ' ' };
+const getElement = (action, deep, name, value) => `${getSpaces(deep)}${action} ${name}: ${convertValue(value, deep)}`;
 
-const render = (ast, counterSpaces = 2) => ast.reduce((acc, {
+const render = (ast, deep = 1) => ast.reduce((acc, {
   name,
   type,
   option,
   previousOption,
   children,
 }) => {
-  if (type === 'parent') {
-    return `${acc}  ${' '.repeat(counterSpaces)}${name}: {\n${render(children, counterSpaces + 4)}  ${' '.repeat(counterSpaces)}}\n`;
+  switch (type) {
+    case 'parent':
+      return [...acc, `${getSpaces(deep)}  ${name}: {`, ...render(children, deep + 1), `${getSpaces(deep)}  }`];
+    case 'edited':
+      return [...acc, getElement('-', deep, name, previousOption), getElement('+', deep, name, option)];
+    case 'added':
+      return [...acc, getElement('+', deep, name, option)];
+    case 'deleted':
+      return [...acc, getElement('-', deep, name, option)];
+    case 'unchanged':
+      return [...acc, getElement(' ', deep, name, option)];
+    default:
+      return new Error('Unexpected type node');
   }
-  const newValue = convertValue(option, counterSpaces);
-  if (type === 'edited') {
-    const newPreviousValue = convertValue(previousOption, counterSpaces);
-    return `${acc}${' '.repeat(counterSpaces)}- ${name}: ${newPreviousValue}\n${' '.repeat(counterSpaces)}+ ${name}: ${newValue}\n`;
-  }
-  return `${acc}${' '.repeat(counterSpaces)}${selectSymbol[type]} ${name}: ${newValue}\n`;
-}, '');
+}, []);
 
-export default (data) => `{\n${render(data)}}`;
+export default (data) => `{\n${render(data).join('\n')}\n}`;
