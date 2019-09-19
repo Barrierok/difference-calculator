@@ -1,4 +1,4 @@
-const getStartString = (partProperty, name) => `Property '${partProperty}${name}' was `;
+const getStartString = (partProperty, name) => `Property '${partProperty}${name}' was`;
 
 const types = {
   object: () => '[complex value]',
@@ -9,22 +9,22 @@ const types = {
 
 const convertValue = (value) => types[typeof value](value);
 
-const stringify = {
-  edited: (item) => `updated. From ${convertValue(item.previousOption)} to ${convertValue(item.option)}`,
-  deleted: () => 'removed',
-  added: (item) => `added with value: ${convertValue(item.option)}`,
-};
-
 const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
-  if (item.type === 'parent') {
-    return [...acc, ...render(item.children, `${partProperty}${item.name}.`)];
-  }
-  if (item.type === 'unchanged') {
-    return acc;
-  }
-
   const startString = getStartString(partProperty, item.name);
-  return item.type ? [...acc, `${startString}${stringify[item.type](item)}`] : acc;
+  switch (item.type) {
+    case 'parent':
+      return [...acc, ...render(item.children, `${partProperty}${item.name}.`)];
+    case 'unchanged':
+      return acc;
+    case 'added':
+      return [...acc, `${startString} added with value: ${convertValue(item.option)}`];
+    case 'deleted':
+      return [...acc, `${startString} removed`];
+    case 'edited':
+      return [...acc, `${startString} updated. From ${convertValue(item.previousOption)} to ${convertValue(item.option)}`];
+    default:
+      return new Error('Unexpected type');
+  }
 }, []);
 
 export default (data) => render(data).join('\n');
