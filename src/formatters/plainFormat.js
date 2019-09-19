@@ -23,7 +23,7 @@ const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
     case 'edited':
       return [...acc, `${startString} updated. From ${convertValue(item.previousOption)} to ${convertValue(item.option)}`];
     default:
-      return new Error('Unexpected type');
+      return new Error('Unexpected type node');
   }
 }, []);
 
