@@ -6,8 +6,8 @@ import render from './formatters';
 
 const templateData = {
   name: '',
-  previousOption: null,
-  option: null,
+  previousData: null,
+  currentData: null,
   type: '',
   children: [],
 };
@@ -27,22 +27,22 @@ const compareData = (data1, data2) => {
       }
 
       if (data1[key] === data2[key]) {
-        return { ...keyData, option: data1[key], type: 'unchanged' };
+        return { ...keyData, currentData: data1[key], type: 'unchanged' };
       }
 
       return {
         ...keyData,
-        previousOption: data1[key],
-        option: data2[key],
+        previousData: data1[key],
+        currentData: data2[key],
         type: 'edited',
       };
     }
 
     if (keyAvailability1) {
-      return { ...keyData, option: data1[key], type: 'deleted' };
+      return { ...keyData, currentData: data1[key], type: 'deleted' };
     }
 
-    return { ...keyData, option: data2[key], type: 'added' };
+    return { ...keyData, currentData: data2[key], type: 'added' };
   });
 };
 
@@ -56,5 +56,6 @@ export default (pathFile1, pathFile2, format = 'treeLike') => {
   const parsedData2 = parse(data2, format2);
 
   const diff = render(compareData(parsedData1, parsedData2), format);
+  // console.log(diff);
   return diff;
 };

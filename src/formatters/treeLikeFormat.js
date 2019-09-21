@@ -1,40 +1,45 @@
-const getSpaces = (deep) => ' '.repeat(4 * deep - 2);
+import { flattenDeep } from 'lodash';
 
-const renderObject = (object, deep) => Object.keys(object).reduce((acc, key) => {
+const getSpaces = (depth) => ' '.repeat(4 * depth - 2);
+
+const renderObject = (object, depth) => Object.keys(object).map((key) => {
   if (typeof object[key] !== 'object') {
-    return [...acc, `${getSpaces(deep)}  ${key}: ${object[key]}`];
+    return `${getSpaces(depth)}  ${key}: ${object[key]}`;
   }
-  const objects = renderObject(object[key], deep + 1);
-  return [...acc, `${getSpaces(deep)}  ${key}: {`, ...objects, `${getSpaces(deep)}  }`];
-}, []);
+  const objects = renderObject(object[key], depth + 1);
+  return [`${getSpaces(depth)}  ${key}: {`, objects, `${getSpaces(depth)}  }`];
+});
 
-const insertObject = (object, deep) => ['{', ...renderObject(object, deep + 1), `${getSpaces(deep)}  }`];
+const insertObject = (object, depth) => ['{', renderObject(object, depth + 1), `${getSpaces(depth)}  }`];
 
-const convertValue = (option, deep) => (typeof option === 'object' ? insertObject(option, deep).join('\n') : option);
+const convertValue = (data, depth) => (typeof data === 'object' ? flattenDeep(insertObject(data, depth)).join('\n') : data);
 
-const getElement = (action, deep, name, value) => `${getSpaces(deep)}${action} ${name}: ${convertValue(value, deep)}`;
+const getElement = (action, depth, name, value) => `${getSpaces(depth)}${action} ${name}: ${convertValue(value, depth)}`;
 
-const render = (ast, deep = 1) => ast.reduce((acc, {
+const render = (ast, depth = 1) => ast.map(({
   name,
   type,
-  option,
-  previousOption,
+  currentData,
+  previousData,
   children,
 }) => {
   switch (type) {
     case 'parent':
-      return [...acc, `${getSpaces(deep)}  ${name}: {`, ...render(children, deep + 1), `${getSpaces(deep)}  }`];
+      return [`${getSpaces(depth)}  ${name}: {`, render(children, depth + 1), `${getSpaces(depth)}  }`];
     case 'edited':
-      return [...acc, getElement('-', deep, name, previousOption), getElement('+', deep, name, option)];
+      return [getElement('-', depth, name, previousData), getElement('+', depth, name, currentData)];
     case 'added':
-      return [...acc, getElement('+', deep, name, option)];
+      return getElement('+', depth, name, currentData);
     case 'deleted':
-      return [...acc, getElement('-', deep, name, option)];
+      return getElement('-', depth, name, currentData);
     case 'unchanged':
-      return [...acc, getElement(' ', deep, name, option)];
+      return getElement(' ', depth, name, currentData);
     default:
-      return new Error('Unexpected type node');
+      return new Error(`Unexpected type node ${type}`);
   }
 }, []);
 
-export default (data) => `{\n${render(data).join('\n')}\n}`;
+export default (data) => {
+  const result = flattenDeep(render(data)).join('\n');
+  return `{\n${result}\n}`;
+};

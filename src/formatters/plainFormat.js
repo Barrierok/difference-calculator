@@ -1,3 +1,5 @@
+import { flattenDeep } from 'lodash';
+
 const getStartString = (partProperty, name) => `Property '${partProperty}${name}' was`;
 
 const types = {
@@ -9,22 +11,24 @@ const types = {
 
 const convertValue = (value) => types[typeof value](value);
 
-const render = (ast, partProperty = '') => ast.reduce((acc, item) => {
+const render = (ast, partProperty = '') => ast.map((item) => {
   const startString = getStartString(partProperty, item.name);
   switch (item.type) {
     case 'parent':
-      return [...acc, ...render(item.children, `${partProperty}${item.name}.`)];
+      return render(item.children, `${partProperty}${item.name}.`);
     case 'unchanged':
-      return acc;
+      return '';
     case 'added':
-      return [...acc, `${startString} added with value: ${convertValue(item.option)}`];
+      return `${startString} added with value: ${convertValue(item.currentData)}`;
     case 'deleted':
-      return [...acc, `${startString} removed`];
+      return `${startString} removed`;
     case 'edited':
-      return [...acc, `${startString} updated. From ${convertValue(item.previousOption)} to ${convertValue(item.option)}`];
+      return `${startString} updated. From ${convertValue(item.previousData)} to ${convertValue(item.currentData)}`;
     default:
-      return new Error('Unexpected type node');
+      return new Error(`Unexpected type node ${item.type}`);
   }
-}, []);
+});
 
-export default (data) => render(data).join('\n');
+export default (data) => flattenDeep(render(data))
+  .filter((item) => item !== '')
+  .join('\n');

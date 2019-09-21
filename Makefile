@@ -22,5 +22,5 @@ test:
 test-coverage:
 	npm test -- --coverage
 
-test-watch:
+watch:
 	npx jest --watchAll
