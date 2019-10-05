@@ -6,7 +6,8 @@ As part of this project, you need to implement a utility to find differences in 
 The features of this utility:
 
 Support for different formats
-Report generation as plain text, pretty and json
+Report generation as plain text, pretty and json.
+
 Example of use:
 
 How to install difference calculator!
