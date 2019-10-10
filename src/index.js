@@ -56,6 +56,5 @@ export default (pathFile1, pathFile2, format = 'treeLike') => {
   const parsedData2 = parse(data2, format2);
 
   const diff = render(compareData(parsedData1, parsedData2), format);
-  // console.log(diff);
   return diff;
 };
